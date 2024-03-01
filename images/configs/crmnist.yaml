@@ -28,6 +28,8 @@ parameters:
     values: [500]
   step_validate:
     values: [500]
+  subsample:
+    values: [True]
 
 command:
   - ${interpreter}
