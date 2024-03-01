@@ -84,7 +84,7 @@ def main():
     parser.add_argument('--save_final_dir',type=str, default=None)
     parser.add_argument('--no_wandb', action='store_true', default=False)
     parser.add_argument('--step_validate', type=int, default=500)  # check the validation loss every this many steps
-    parser.add_argument('--step_vis', type=int, default=5_000)  # plot rmnist generated samples and counterfactuals
+    parser.add_argument('--step_vis', type=int, default=10_000)  # plot rmnist generated samples and counterfactuals
     parser.add_argument('--step_save', type=int, default=5_00000)  # save model every this many steps
     parser.add_argument('--note', default='')
     parser.add_argument('--project_prefix', default='')
