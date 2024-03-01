@@ -1,0 +1,56 @@
+program: main.py
+method: grid
+metric:
+  name: "Test/CF-total"
+  goal: minimize
+name: "lr"                # This is the name of the sweep
+project: "ICML24-CFImpro"  # This is the project the sweep should be placed under
+entity: "zyzhou"
+
+parameters:
+  dataset:
+    values: ['rmnist','crmnist']
+  model_preset:
+    values: [1]
+  seed:
+    values: [1,2,3,4,5]
+  latent_dim:
+    values: [10]
+  k_spa:
+    values: [2]
+  lr_g:
+    values: [0.001]
+  ib_type:
+    values: ['first']
+  lamb_ib:
+    values: [0]
+  kld_scheduler:
+    values: ['none']
+  lamb_kld_start:
+    values: [1000]  # If kld_scheduler is 'none', then lamb_kld_start will be the constant kld weight value
+  use_weight_decay:
+    values: [False]
+  num_iters:
+    values: [1_000_000]
+  step_save:
+    values: [20000]
+  step_validate:
+    values: [20000]
+  save_dir:
+    values: ['saved/lr']
+  save_final_dir:
+    values: ['saved/lr']
+
+# this is required so that boolean args like `--c_decreasing` are only passed if their value is true
+command:
+  - ${interpreter}
+  - ${program}
+  - ${args_no_boolean_flags}
+  - "--sweep"
+
+
+
+#CUDA_VISIBLE_DEVICES=0 wandb agent inouye-lab/ICLR2024-COLORRMNIST-TestSweep-Datasetv2/7ypbl003
+#CUDA_VISIBLE_DEVICES=1 wandb agent inouye-lab/ICLR2024-COLORRMNIST-TestSweep-Datasetv2/7ypbl003
+#CUDA_VISIBLE_DEVICES=2 wandb agent inouye-lab/ICLR2024-COLORRMNIST-TestSweep-Datasetv2/7ypbl003
+#CUDA_VISIBLE_DEVICES=3 wandb agent inouye-lab/ICLR2024-COLORRMNIST-TestSweep-Datasetv2/7ypbl003

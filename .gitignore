@@ -1,0 +1,6 @@
+scripts
+*.log
+*.saved
+*.wandb
+*.cache
+.idea

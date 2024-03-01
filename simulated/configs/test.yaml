@@ -1,0 +1,30 @@
+ program: main.py
+ method: grid
+ metric:
+   name: counterfactual_error/d_neq_dp_avg
+   goal: minimize
+ name: "init_test"                # This is the name of the sweep
+ project: "ILD-DG"  # This is the project the sweep should be placed under
+ entity: "zyzhou"
+
+ parameters:
+   f_type:
+     values: ['can']
+   seed:
+     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+   batch_size:
+     values: [500]
+   n_domains:
+     values: [3]
+   k_spa:
+     values: [2]
+   int_set:
+     values: ['4,5']
+   latent_dim:
+     values: [10]
+   bias_scale:
+     values: [2]
+   step_check:
+     values: [1000]
+   algorithm:
+     values: ['erm', 'erm_ild']
