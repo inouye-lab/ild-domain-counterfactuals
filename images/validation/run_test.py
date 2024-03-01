@@ -352,7 +352,7 @@ def build_model_info_df(root_model_dir, checkpoint_dir=None):
             with open(checkpoint_dir / f'k{model_dict["k_spa"]}.pkl', 'rb') as f:
                 checkpoint = pickle.load(f)[model_dict["ild_type"]][int(model_dict["seed"])]
         else:
-            checkpoint = 300_000
+            checkpoint = 'best'
             #checkpoint = get_last_checkpoint_idx(model_dir)
         model_dict['checkpoint_idx'] = checkpoint
         return model_dict

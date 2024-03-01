@@ -4,60 +4,6 @@ import numpy as np
 import torch
 import torch.utils.data as data_utils
 from torchvision import datasets, transforms
-class SimulatedDatasetTrain(data_utils.Dataset):
-
-    def __init__(self,
-                 simulated_dataset,
-                 test_domain):
-        self.observed = simulated_dataset.observed
-        self.latent = simulated_dataset.latent
-        self.domain = simulated_dataset.domain
-        self.eps = simulated_dataset.eps
-        self.label = simulated_dataset.label
-
-        self.observed = self.observed[self.domain != test_domain]
-        self.latent = self.latent[self.domain != test_domain]
-        self.eps = self.eps[self.domain != test_domain]
-        self.label = self.label[self.domain != test_domain]
-        self.domain = self.domain[self.domain != test_domain]
-
-    def __len__(self):
-        return len(self.observed)
-
-    def __getitem__(self, index):
-        x = self.observed[index]
-        d = self.domain[index]
-        y = self.label[index]
-        eps = self.eps[index]
-        return x, d, y, eps
-
-
-class SimulatedDatasetTest(data_utils.Dataset):
-
-    def __init__(self,
-                 simulated_dataset,
-                 test_domain):
-        self.observed = simulated_dataset.observed
-        self.latent = simulated_dataset.latent
-        self.domain = simulated_dataset.domain
-        self.eps = simulated_dataset.eps
-        self.label = simulated_dataset.label
-
-        self.observed = self.observed[self.domain == test_domain]
-        self.latent = self.latent[self.domain == test_domain]
-        self.eps = self.eps[self.domain == test_domain]
-        self.label = self.label[self.domain == test_domain]
-        self.domain = self.domain[self.domain == test_domain]
-
-    def __len__(self):
-        return len(self.observed)
-
-    def __getitem__(self, index):
-        x = self.observed[index]
-        d = self.domain[index]
-        y = self.label[index]
-        eps = self.eps[index]
-        return x, d, y, eps
 
 class SimulatedDataset(data_utils.Dataset):
     def __init__(self,
