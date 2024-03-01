@@ -3,11 +3,75 @@ import numpy as np
 import torch
 import torch.utils.data as data_utils
 from torchvision import datasets, transforms
-from itertools import permutations, combinations_with_replacement
-import random
 from sc2image.dataset import StarCraftMNIST
+import h5py
+from sklearn import preprocessing
+
 
 COLOR_MAP = [[1, 2], [0, 1], [0, 2], [2], [1], [0],[]]
+
+
+class Shape3D(data_utils.Dataset):
+    def __init__(self,
+                 list_train_domains,
+                 root,
+                 train=True,
+                 transform=None,
+                 download=True):
+
+        self.list_train_domains = list_train_domains
+        self.root = os.path.expanduser(root)
+        self.transform = transform
+        self.train = train
+        self.download = download
+        self.data, self.label, self.domain = self._get_data()
+
+    def _get_data(self):
+
+        dataset = h5py.File(f'{self.root}/3dshape/3dshapes.h5', 'r')
+        images = np.load(f'{self.root}/3dshape/images_3.npy')
+        #images = dataset['images']
+        all_labels = dataset['labels']  # array shape [480000,6], float64
+
+        # subsampling
+        # images = images[:]
+        # all_labels = all_labels[:]
+        # images = images[all_labels[:, 3] == 1.25]
+        # all_labels = all_labels[all_labels[:, 3] == 1.25]
+        #
+        # images /= 255
+        # images = torch.Tensor(images).to(torch.float32).permute(0, 3, 1, 2)
+
+        if self.train:
+            train_idx = np.load(f'{self.root}/3dshape/train_idx3.npy')
+            images = images[train_idx]
+            all_labels = all_labels[train_idx]
+        else:
+            test_idx = np.load(f'{self.root}/3dshape/test_idx3.npy')
+            images = images[test_idx]
+            all_labels = all_labels[test_idx]
+
+        # use shape as domains
+        domain = torch.Tensor(all_labels[:, 4]).long()
+
+        # use object hue as labels
+        le = preprocessing.LabelEncoder()
+        label = le.fit_transform(all_labels[:, 2])
+
+        return torch.Tensor(images), torch.Tensor(label).long(), domain
+
+    def __len__(self):
+
+        return len(self.domain)
+
+    def __getitem__(self, index):
+        x = self.data[index]
+        y = self.label[index]
+        d = self.domain[index]
+
+        if self.transform is not None:
+            x = self.transform(x)
+        return x, y, d
 
 class MnistColorRotated(data_utils.Dataset):
     def __init__(self,

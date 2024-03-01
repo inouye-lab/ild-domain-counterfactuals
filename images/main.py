@@ -8,30 +8,11 @@ import torch
 import torch.nn as nn
 import torchvision
 
-from dataset import MnistColorRotated, MnistRotated
+from dataset import MnistColorRotated, MnistRotated, Shape3D
 from solver import Solver
 
 import wandb
 
-KLD_SCHEDULER_PRESETS = {
-    1: {'kld_scheduler': 'linear', 'lamb_kld_start': 0.001, 'lamb_kld_end': 1e5,
-         'kld_step_delay_frac': 0.2, 'kld_step_end_frac': 1},
-
-    2: {'kld_scheduler': 'linear', 'lamb_kld_start': 100, 'lamb_kld_end': 1e5,
-         'kld_step_delay_frac': 0.5, 'kld_step_end_frac': 1},
-
-    3: {'kld_scheduler': 'linear', 'lamb_kld_start': 1, 'lamb_kld_end': 1e-5,
-         'kld_step_delay_frac': 0.3, 'kld_step_end_frac': 1},
-
-    4: {'kld_scheduler': 'linear', 'lamb_kld_start': 1, 'lamb_kld_end': 1e10,
-         'kld_step_delay_frac': 0, 'kld_step_end_frac': 1},
-
-    5: {'kld_scheduler': 'linear', 'lamb_kld_start': 0.01, 'lamb_kld_end': 1e4,
-         'kld_step_delay_frac': 0, 'kld_step_end_frac': 1},
-
-    6: {'kld_scheduler': 'linear', 'lamb_kld_start': 0.01, 'lamb_kld_end': 1e4,
-         'kld_step_delay_frac': 0.1, 'kld_step_end_frac': 1},
-}
 
 MODEL_PRESETS = {
     1: {'f_type': 'relax_can', 'g_type': 'beta'},
@@ -47,20 +28,6 @@ MODEL_PRESET_TO_NAME = {
     4: 'independent',
 }
 
-# import user variables for wandb
-try:
-    sys.path.append('..')
-    sys.path.append('.')
-    from wandb_env import WANDB_PROJECT_PREFIX
-except ImportError:
-    print('No wandb environment file found.\nTo make one, go to the above directory and',
-          'create a file called `wandb_env.py` and enter: `WANDB_PROJECT_PREFIX = \'<your initials>\.',
-          '\ne.g., sean\'s `wandb_env.py` looks like: `WANDB_PROJECT_PREFIX = \'SK\'.')
-    WANDB_PROJECT_PREFIX = '00'
-    print('Defaulting to wandb project prefix: ', WANDB_PROJECT_PREFIX)
-
-
-
 
 def main():
 
@@ -74,8 +41,7 @@ def main():
                         help='random seed (default: 0)')  # set to None for a random seed
 
     # ------------------- dataset params ------------------- #
-    # parser.add_argument('--list_train_domains', '--list', nargs='+', default=['0','90'],
-    #                    help='domains used during training')
+
     parser.add_argument('--dataset', type=str, default='rmnist')
     parser.add_argument('--subsample', action='store_true', default=False,help='subsample the dataset to be 1/10')
 
@@ -113,7 +79,7 @@ def main():
     parser.add_argument('--use_weight_decay', default=False, action='store_true')
 
     # log and dir
-    parser.add_argument('--data_dir', type=str, default='../data')
+    parser.add_argument('--data_dir', type=str, default='./data')
     parser.add_argument('--save_dir', default='saved/test')
     parser.add_argument('--save_final_dir',type=str, default=None)
     parser.add_argument('--no_wandb', action='store_true', default=False)
@@ -144,7 +110,6 @@ def main():
     torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
     kwargs = {'num_workers': 1, 'pin_memory': False} if args.cuda else {}
-    #TODO: check if num workers should be increased.
 
     # ======================== #
     #         misc check       #
@@ -154,11 +119,11 @@ def main():
     # ======================== #
     #         params           #
     # ======================== #
-    if args.kld_preset_value > 0:
-        kld_preset = KLD_SCHEDULER_PRESETS[args.kld_preset_value]
-        print(f'Using KLD scheduler preset {kld_preset}')
-        for k, v in kld_preset.items():
-            setattr(args, k, v)  # set the values for the kld scheduler
+    # if args.kld_preset_value > 0:
+    #     kld_preset = KLD_SCHEDULER_PRESETS[args.kld_preset_value]
+    #     print(f'Using KLD scheduler preset {kld_preset}')
+    #     for k, v in kld_preset.items():
+    #         setattr(args, k, v)  # set the values for the kld scheduler
     if args.model_preset > 0:
         model_preset = MODEL_PRESETS[args.model_preset]
         print(f'Using model preset {model_preset}')
@@ -170,25 +135,20 @@ def main():
     # ======================== #
     args.wandb = not args.no_wandb
     run_name = f'M{args.latent_dim}_k{args.k_spa}_beta{args.lamb_kld_start}'
-    if args.lamb_ib > 0:
-        run_name += f'_ib{args.ib_type}{args.lamb_ib}'
     run_name += f'_seed{args.seed}'
     if args.model_preset > 0:
         args.run_name = f'[{MODEL_PRESET_TO_NAME[args.model_preset]}]_{run_name}'
     else:
         args.run_name = f'[{args.f_type}]_{run_name}'
 
-    args.project_prefix = WANDB_PROJECT_PREFIX if args.project_prefix == '' else args.project_prefix
-    # print(f'Run: {args.run_name} with args:\n{vars(args)}')
     if args.wandb or args.sweep:
-        wandb.init(project=f"[{args.project_prefix}]-colorrmnist" if not args.sweep else None,
+        wandb.init(project=f"DomainCF" if not args.sweep else None,
                    entity="inouye-lab" if not args.sweep else None,
                    name=args.run_name,
                    config=vars(args))
         wandb.run.log_code()
         wandb.define_metric('Test/CF-total', summary='min')
-        # wandb.define_metric('Val-loss/recon', summary='min')
-        # wandb.define_metric('Val-loss/align', summary='min')
+
 
     # ======================== #
     #         data             #
@@ -206,6 +166,11 @@ def main():
         args.list_train_domains = ['0', '90']
         all_data = MnistColorRotated(args.list_train_domains, args.data_dir, train=True)
         test_set = MnistColorRotated(args.list_train_domains, args.data_dir, train=False)
+    elif args.dataset == 'shape':
+        args.image_shape = (3, 28, 28)
+        args.list_train_domains = [0,1,2,3]
+        all_data = Shape3D(args.list_train_domains, args.data_dir, train=True)
+        test_set = Shape3D(args.list_train_domains, args.data_dir, train=False)
 
     train_size = int(0.9 * len(all_data))
     val_size = len(all_data) -  train_size
@@ -220,9 +185,6 @@ def main():
     test_loader = torch.utils.data.DataLoader(test_set,
                                         batch_size=args.batch_size,
                                         shuffle=False, **kwargs)
-
-
-   # TODO: check if there are any problems with splitting the data this way.
 
     args.n_domains = len(args.list_train_domains)
     args.domain_list = list(range(len(args.list_train_domains)))
