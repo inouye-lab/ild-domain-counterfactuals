@@ -1,0 +1,40 @@
+program: main.py
+method: grid
+metric:
+  name: "Test/CF-total"
+  goal: minimize
+name: "camera-ready"                # This is the name of the sweep
+project: "ICLR24-CRMNIST"  # This is the project the sweep should be placed under
+entity: "inouye-lab"
+
+parameters:
+  dataset:
+    values: ['crmnist']
+  model_preset:
+    values: [1,2,3,4]
+  seed:
+    values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+  latent_dim:
+    values: [10]
+  k_spa:
+    values: [1,2,5]
+  kld_scheduler:
+    values: ['none']
+  lamb_kld_start:
+    values: [1000]  # If kld_scheduler is 'none', then lamb_kld_start will be the constant kld weight value
+  num_iters:
+    values: [300_000]
+  step_save:
+    values: [500]
+  step_validate:
+    values: [500]
+
+command:
+  - ${interpreter}
+  - ${program}
+  - ${args_no_boolean_flags}
+  - "--sweep"
+  - "--note"
+  - "iclrfinal"
+  - "--save_dir"
+  - "./ICLR/ICLR_models"
