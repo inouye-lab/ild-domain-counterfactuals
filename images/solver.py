@@ -132,7 +132,7 @@ class Solver(object):
 
     def train(self):
         start_iters = 0
-
+        best_val_loss = np.inf
         for i in tqdm(range(start_iters, self.num_iters), desc='Training'):
 
             all_weight_decay = [0.001, 0.01, 0.1, 1]
@@ -189,7 +189,7 @@ class Solver(object):
             self.reset_grad()
 
             # total_loss =  loss_recon + 4 * loss_alignment
-            total_loss =  loss_recon + self.kld_scheduler.get_weight(step=True) * loss_alignment + self.lamb_ib * loss_ib
+            total_loss =  loss_recon + self.kld_scheduler.get_weight(step=True) * loss_alignment
             total_loss.backward()
 
             self.f_opt.step()
@@ -214,9 +214,11 @@ class Solver(object):
                 self.visualize_counterfactuals(i, data_split='val')
                 # Compute validation loss
                 val_loss_recon, val_loss_align = self.calc_validation_losses('val', normalize_by_batch_count=True)
+                val_loss = val_loss_recon + val_loss_align * self.kld_scheduler.get_weight(step=True)
                 if self.wandb:
                     wandb.log({'Val-loss/recon': val_loss_recon,
                                 'Val-loss/align': val_loss_align,
+                                'Val-loss/total': val_loss,
                                 }, step=i)
                 # cf_total_error, cf_d_eq_dp, cf_d_not_eq_dp = self.cal_cf_error('test')
                 # if self.wandb:
@@ -234,16 +236,23 @@ class Solver(object):
                     save_dir.mkdir(parents=True)
                 torch.save(self.G.state_dict(), str(save_dir / f'G_{i+1}.pt'))
                 torch.save(self.F.state_dict(), str(save_dir / f'F_{i+1}.pt'))
+
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    torch.save(self.G.state_dict(), str(save_dir / f'G_best.pt'))
+                    torch.save(self.F.state_dict(), str(save_dir / f'F_best.pt'))
+
+                # find best ckpt
                 # save config file
                 if not (save_dir / 'config.yml').exists():
                     with open(save_dir / 'config.yml', 'w') as f:
                         yaml.dump(self.config, f)
 
-        if self.save_final_dir is not None:
-            source = Path(f'/local/scratch/a/zhou1059/ild_dg/images/{self.save_dir}') / f'{self.dataset}' / f'{self.run_name}'
-            destination = Path(f'honeydew:/local/scratch/a/zhou1059/ild_dg/images/{self.save_final_dir}') / f'{self.dataset}'
-            command = ["rsync", "--mkpath", "-r", source, destination]
-            subprocess.run(command, check=True)
+        # if self.save_final_dir is not None:
+        #     source = Path(f'/local/scratch/a/zhou1059/ild_dg/images/{self.save_dir}') / f'{self.dataset}' / f'{self.run_name}'
+        #     destination = Path(f'honeydew:/local/scratch/a/zhou1059/ild_dg/images/{self.save_final_dir}') / f'{self.dataset}'
+        #     command = ["rsync", "--mkpath", "-r", source, destination]
+        #     subprocess.run(command, check=True)
 
     def _sample_dataloader(self, data_split, put_on_device=False):
         try:
