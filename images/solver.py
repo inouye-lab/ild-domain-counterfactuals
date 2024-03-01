@@ -50,8 +50,6 @@ class Solver(object):
         self.num_iters = config.num_iters
         self.beta1 = config.beta1
         self.beta2 = config.beta2
-        self.lamb_ib = config.lamb_ib
-        self.ib_type = config.ib_type
 
         self.lr_f = config.lr_f
         self.lr_g = config.lr_g

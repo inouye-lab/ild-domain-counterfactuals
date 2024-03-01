@@ -54,8 +54,6 @@ def main():
     parser.add_argument('--kld_step_end_frac', type=int, default=1)  # the percentage of total steps when the scheduler should end)
     parser.add_argument('--lamb_kld_start', type=float, default=1)  # this is the kld lambda at the start of training
     parser.add_argument('--lamb_kld_end', type=float, default=1)
-    parser.add_argument('--ib_type', type=str, default='all', choices=['all', 'first', 'last'])
-    parser.add_argument('--lamb_ib',type=float,default=0.0)
 
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--beta1', type=float, default=0.5)
