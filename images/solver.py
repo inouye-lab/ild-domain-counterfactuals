@@ -118,39 +118,10 @@ class Solver(object):
         log_var = torch.clamp(log_var, max=15)  # max value of exp(15) is 3269017
         return torch.mean(-0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp(), dim = 1), dim = 0)
 
-    def information_loss(self, z):
-        if self.ib_type == 'all':
-            return torch.var(z, dim=0).mean()
-        elif self.ib_type == 'first':
-            return torch.var(z[:, :-self.k_spa], dim=0).mean()
-        elif self.ib_type == 'last':
-            return torch.var(z[:, -self.k_spa:], dim=0).mean()
-        else:
-            raise ValueError(f'Invalid ib_type: {self.ib_type}')
-
     def train(self):
         start_iters = 0
         best_val_loss = np.inf
         for i in tqdm(range(start_iters, self.num_iters), desc='Training'):
-
-            all_weight_decay = [0.001, 0.01, 0.1, 1]
-            if self.use_weight_decay:
-                if i == int((self.num_iters*0.2)):
-                    self.f_opt.param_groups[0]['weight_decay'] = all_weight_decay[0]
-                    self.g_opt.param_groups[0]['weight_decay'] = all_weight_decay[0]
-                    print(f'Weight decay set to {all_weight_decay[0]}')
-                elif i == int((self.num_iters*0.4)):
-                    self.f_opt.param_groups[0]['weight_decay'] = all_weight_decay[1]
-                    self.g_opt.param_groups[0]['weight_decay'] = all_weight_decay[1]
-                    print(f'Weight decay set to {all_weight_decay[1]}')
-                elif i == int((self.num_iters*0.6)):
-                    self.f_opt.param_groups[0]['weight_decay'] = all_weight_decay[2]
-                    self.g_opt.param_groups[0]['weight_decay'] = all_weight_decay[2]
-                    print(f'Weight decay set to {all_weight_decay[2]}')
-                elif i == int((self.num_iters*0.8)):
-                    self.f_opt.param_groups[0]['weight_decay'] = all_weight_decay[3]
-                    self.g_opt.param_groups[0]['weight_decay'] = all_weight_decay[3]
-                    print(f'Weight decay set to {all_weight_decay[3]}')
 
             self.set_model_mode(set_to_train=True)
 
@@ -178,8 +149,6 @@ class Solver(object):
             loss_recon = self.recon_loss(x_real, x_back)
             #Alignment loss
             loss_alignment = self.latent_alignment_loss(mu, log_var)
-            # information bottleneck loss
-            loss_ib = self.information_loss(z_from_G)
 
             # =================================================================================== #
             #                         3. Step Models                                              #
@@ -196,7 +165,6 @@ class Solver(object):
             if self.wandb:
                 wandb.log({'Train-loss/recon': loss_recon.item(),
                            'Train-loss/align': loss_alignment.item(),
-                            'Train-loss/ib': loss_ib.item(),
                            'Train-loss/total': total_loss.item(),
                            'kld_weight': self.kld_scheduler.get_weight(step=False),
                           }, step=i)
