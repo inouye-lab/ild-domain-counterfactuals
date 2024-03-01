@@ -18,21 +18,21 @@ echo "Sweep URL: $sweep_url"
 echo "Sweep Agent Command: $sweep_agent_command"
 
 
-for machine in eggplant fig  # cranberry dewberry avocado blueberry
-do
-    for device in 0 1
-    do
-        for repeat in 0
-        do
-            echo "run task on ${machine} d${device}-${repeat} ${sweep_agent_command}"
-            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'conda deactivate' ENTER"
-            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'conda activate causal' ENTER"
-            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'cd ${task_dir}' ENTER"
-            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'git pull' ENTER"
-            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'CUDA_VISIBLE_DEVICES=${device} ${sweep_agent_command}' ENTER"
-        done
-    done
-done
+#for machine in eggplant fig cranberry dewberry avocado blueberry
+#do
+#    for device in 0 1
+#    do
+#        for repeat in 0
+#        do
+#            echo "run task on ${machine} d${device}-${repeat} ${sweep_agent_command}"
+#            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'conda deactivate' ENTER"
+#            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'conda activate causal' ENTER"
+#            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'cd ${task_dir}' ENTER"
+#            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'git pull' ENTER"
+#            ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'CUDA_VISIBLE_DEVICES=${device} ${sweep_agent_command}' ENTER"
+#        done
+#    done
+#done
 
 for machine in grapefruit
 do
