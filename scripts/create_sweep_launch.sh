@@ -1,6 +1,6 @@
 #!/bin/bash
 
-task_dir="/local/scratch/a/zhou1059/ild_domaincf/images"
+task_dir="/local/scratch/a/zhou1059/ild_domaincf/simulated"
 #sweep_dir="./configs/app_testfault_ndevice.yaml"
 read -p "Enter the sweep directory path: " input_sweep_dir
 sweep_dir="$task_dir/configs/$input_sweep_dir"
@@ -22,7 +22,7 @@ for machine in eggplant #fig cranberry dewberry avocado blueberry
 do
     for device in 0 1
     do
-        for repeat in 0
+        for repeat in 1
         do
             echo "run task on ${machine} d${device}-${repeat} ${sweep_agent_command}"
             ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'conda deactivate' ENTER"
@@ -38,7 +38,7 @@ for machine in grapefruit
 do
     for device in 0
     do
-        for repeat in 0
+        for repeat in 1
         do
             echo "run task on ${machine} d${device}-${repeat} ${sweep_agent_command}"
             ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'conda deactivate' ENTER"
@@ -54,7 +54,7 @@ for machine in honeydew ichigo
 do
     for device in 0 1 2 3
     do
-        for repeat in 0
+        for repeat in 1
         do
             echo "run task on ${machine} d${device}-${repeat} ${sweep_agent_command}"
             ssh $machine "tmux send-keys -t "d${device}-${repeat}" 'conda deactivate' ENTER"
