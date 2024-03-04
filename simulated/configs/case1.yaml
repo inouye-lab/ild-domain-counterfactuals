@@ -4,7 +4,7 @@
    name: counterfactual_error/d_neq_dp_avg
    goal: minimize
  name: "case1"                # This is the name of the sweep
- project: "ICLR24-Simulated"  # This is the project the sweep should be placed under
+ project: "ICLR24-CameraReady-Simulated"  # This is the project the sweep should be placed under
  entity: "zyzhou"
 
  parameters:
