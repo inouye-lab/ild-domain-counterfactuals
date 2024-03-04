@@ -5,7 +5,7 @@
    goal: minimize
  name: "case1"                # This is the name of the sweep
  project: "ICLR24-CameraReady-Simulated"  # This is the project the sweep should be placed under
- entity: "zyzhou"
+ entity: "inouye-lab"
 
  parameters:
    f_type:
