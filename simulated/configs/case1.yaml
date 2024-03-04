@@ -22,7 +22,5 @@
      values: ['0,1','1,2','2,3','3,4','4,5']
    latent_dim:
      values: [6]
-   bias_scale:
-     values: [2]
    step_check:
      values: [100]
