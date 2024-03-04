@@ -3,7 +3,7 @@
  metric:
    name: counterfactual_error/d_neq_dp_avg
    goal: minimize
- name: "case1"                # This is the name of the sweep
+ name: "case2"                # This is the name of the sweep
  project: "ILD-DG"  # This is the project the sweep should be placed under
  entity: "zyzhou"
 
@@ -15,11 +15,11 @@
    batch_size:
      values: [500]
    n_domains:
-     values: [2,3,5,10]
+     values: [2,3,10]
    k_spa:
-     values: [2]
+     values: [1,2,3,4]
    int_set:
-     values: ['0,1','1,2','2,3','3,4','4,5']
+     values: ['5','4,5','3,4,5','2,3,4,5']
    latent_dim:
      values: [6]
    bias_scale:

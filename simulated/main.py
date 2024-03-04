@@ -60,7 +60,7 @@ def main():
     parser.add_argument('--save_dir', default='./saved')
     parser.add_argument('--no_wandb', action='store_true', default=False)
     parser.add_argument('--step_check', type=int, default=100)
-    parser.add_argument('--step_vis', type=int, default=50_000)
+    parser.add_argument('--step_vis', type=int, default=50_0000)
     parser.add_argument('--step_save', type=int, default=1000000)
     parser.add_argument('--note', default='')
     parser.add_argument('--project_prefix', default='')
