@@ -147,6 +147,7 @@ class Solver(object):
             #                                 5. Miscellaneous                                    #
             # =================================================================================== #
             if (i + 1) % self.step_check == 0:
+                self.calc_alignment_error(idx=i, data_split='val')
                 self.calc_gt_counterfactual_error(idx=i, data_split='test')
                 self.calc_alignment_error(idx=i, data_split='test')
 
