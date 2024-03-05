@@ -7,3 +7,32 @@ Welcome! This is the official repository for the following paper:
 
 
 This repository will be updated soon! Feel free to email the authors for code.
+
+
+
+# General Guidance 
+
+All experiments are conducted using wandb sweep. **TODO**: Add some instruction on how to run the experiments.
+
+# Simulated Experiments
+
+All corresponding code could be found in the `simulated` folder. 
+
+To regenerate the figures in the paper:
+
+### Step 1
+Run all sweeps in the directory `simulated/configs`.
+
+### Step 2 
+Follow the instruction in the notebook `simulated/demo_results.ipynb` to regenerate the figures.
+
+## Additional Experiments 
+
+In the rebuttal, we add some additional experiments using Normalizing Flows and VAEs as G. The corresponding code could
+be found in `simulated/flow` and `simulated/vae` respectively. Similarly, to regenerate the figures in the paper: (1) 
+run the sweeps in the corresponding `configs` directory, and (2) follow the instruction in the notebook.
+
+**TODO**: Clean up the code for these experiments.
+
+
+# Notes
