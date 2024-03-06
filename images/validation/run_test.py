@@ -431,7 +431,7 @@ def build_metric_box_plot_across_seeds(results_dir, plot_save_name=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default='rmnist')
-    parser.add_argument('--model_dir', type=str, default='saved/ib')
+    parser.add_argument('--model_dir', type=str, default='../ICLR/ICLR_models')
     args = parser.parse_args()
 
 
