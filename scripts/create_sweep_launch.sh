@@ -66,3 +66,4 @@ do
     done
 done
 
+rsync -r /local/scratch/a/zhou1059/ild_domaincf/images/ICLR/ICLR_models/ honeydew:/local/scratch/a/zhou1059/ild_domaincf/images/ICLR/ICLR_models/

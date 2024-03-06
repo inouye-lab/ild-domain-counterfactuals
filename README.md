@@ -16,7 +16,9 @@ All experiments are conducted using wandb sweep. **TODO**: Add some instruction 
 
 # Simulated Experiments
 
-All corresponding code could be found in the `simulated` folder. 
+All corresponding code could be found in the `simulated` folder.
+
+**TODO**: Add some instruction on how to run a single experiment.
 
 To regenerate the figures in the paper:
 
