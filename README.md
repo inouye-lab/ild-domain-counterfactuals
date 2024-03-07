@@ -32,7 +32,8 @@ Follow the instruction in the notebook `simulated/demo_results.ipynb` to regener
 
 In the rebuttal, we add some additional experiments using Normalizing Flows and VAEs as G. The corresponding code could
 be found in `simulated/flow` and `simulated/vae` respectively. Similarly, to regenerate the figures in the paper: (1) 
-run the sweeps in the corresponding `configs` directory, and (2) follow the instruction in the notebook.
+run the sweeps in the corresponding `configs` directory, and (2) follow the instruction in the notebook (share the same notebook
+with other simulated experiments).
 
 **TODO**: Clean up the code for these experiments.
 
