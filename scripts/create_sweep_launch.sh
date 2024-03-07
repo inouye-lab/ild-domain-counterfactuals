@@ -1,6 +1,6 @@
 #!/bin/bash
 
-task_dir="/local/scratch/a/zhou1059/ild_domaincf/simulated/flow"
+task_dir="/local/scratch/a/zhou1059/ild_domaincf/simulated/vae"
 #sweep_dir="./configs/app_testfault_ndevice.yaml"
 read -p "Enter the sweep directory path: " input_sweep_dir
 sweep_dir="$task_dir/configs/$input_sweep_dir"
