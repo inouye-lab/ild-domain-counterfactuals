@@ -36,5 +36,23 @@ run the sweeps in the corresponding `configs` directory, and (2) follow the inst
 
 **TODO**: Clean up the code for these experiments.
 
+# Image Experiments
+
+
+## Validation
+
+### Step 1
+Go to directory `images/validation`, run
+```
+python run_prep_classifier.py
+```
+**TODO**: Fix path? Arguments?
+
+### Step 2 
+Run 
+
+```angular2html
+python run_test.py
+```
 
 # Notes
